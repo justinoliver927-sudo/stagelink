@@ -474,26 +474,64 @@ const supabaseClient = window.supabase.createClient(
       });
     });
 
-    document.getElementById("signupForm").addEventListener("submit", event => {
-      event.preventDefault();
-      const form = event.currentTarget;
-      if (!form.reportValidity()) return;
+    
+const signupForm = document.getElementById("signupForm");
 
-      const name = document.getElementById("stageName").value.trim();
-      const category = document.getElementById("category").value;
-      const city = document.getElementById("city").value.trim();
-      const province = document.getElementById("province").value;
-      const email = document.getElementById("email").value.trim();
-      const style = document.getElementById("style").value.trim();
+signupForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-      const notice = document.getElementById("signupNotice");
-      notice.textContent =
-        "Preview only — not submitted or saved. Artist: " + name +
-        " | Category: " + category + " | Location: " + city + ", " + province +
-        " | Email: " + email + (style ? " | Bio: " + style : "") +
-        ". No payment has been taken.";
-      notice.classList.add("show");
-      notice.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    if (!signupForm.reportValidity()) return;
+
+    const stageName = document.getElementById("stageName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const category = document.getElementById("category").value;
+    const city = document.getElementById("city").value.trim();
+    const province = document.getElementById("province").value;
+    const style = document.getElementById("style").value.trim();
+    const notice = document.getElementById("signupNotice");
+
+    const button = signupForm.querySelector('button[type="submit"]');
+    if (button) button.disabled = true;
+
+    notice.textContent = "Creating your StageLink account...";
+
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    stage_name: stageName,
+                    category: category,
+                    city: city,
+                    province: province,
+                    music_style: style
+                }
+            }
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+            notice.textContent =
+                "Account created! Your account is signed in. Next, we will finish saving your artist profile.";
+        } else {
+            notice.textContent =
+                "Signup received! Check your email for a confirmation link. Next, we will finish saving your artist profile.";
+        }
+
+        signupForm.reset();
+
+    } catch (error) {
+        notice.textContent =
+            "Signup failed: " + error.message +
+            ". Please check your details and try again.";
+    } finally {
+        if (button) button.disabled = false;
+    }
+});
+
     });
 
     document.getElementById("year").textContent = new Date().getFullYear();
