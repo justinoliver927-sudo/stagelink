@@ -405,7 +405,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
-    const menuBtn = document.getElementById("menuBtn");
+    const STAGELINK_SUPABASE_URL = "https://zgajktrtxkpugrvtsnvs.supabase.co";
+const STAGELINK_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_tDTI0kkCP4o27RikagCA4g_U66KYPfW";
+
+const supabaseClient = window.supabase.createClient(
+    STAGELINK_SUPABASE_URL,
+    STAGELINK_SUPABASE_PUBLISHABLE_KEY
+);
+  const menuBtn = document.getElementById("menuBtn");
     const navLinks = document.getElementById("navLinks");
 
     menuBtn.addEventListener("click", () => {
