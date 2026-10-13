@@ -495,6 +495,7 @@ signupForm.addEventListener("submit", async function(event) {
     if (button) button.disabled = true;
 
     notice.textContent = "Creating your StageLink account...";
+  notice.classList.add("show");
 
     try {
         const { data, error } = await supabaseClient.auth.signUp({
