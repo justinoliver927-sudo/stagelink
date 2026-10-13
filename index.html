@@ -316,6 +316,21 @@
               <label for="stageName">Stage or artist name *</label>
               <input id="stageName" name="stageName" required maxlength="70" placeholder="Your artist name">
             </div>
+            
+<div class="field">
+  <label for="password">Create password *</label>
+  <input
+    id="password"
+    name="password"
+    type="password"
+    required
+    minlength="8"
+    autocomplete="new-password"
+    placeholder="At least 8 characters"
+  >
+  <p class="hint">Use a unique password you don't use elsewhere.</p>
+</div>
+
             <div class="field">
               <label for="email">Email address *</label>
               <input id="email" name="email" type="email" required maxlength="120" placeholder="you@example.com">
