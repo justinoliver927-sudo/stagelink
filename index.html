@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="Discover musicians and DJs with StageLink, South Africa's artist discovery concept.">
+  <title>StageLink | Discover Your Next Sound</title>
+  <style>
+    :root {
+      --black: #090909;
+      --panel: #151515;
+      --gold: #d4af37;
+      --white: #fff;
+      --muted: #b8b8b8;
+      --green: #258653;
+      --border: #333;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--black);
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    button, .btn { cursor: pointer; }
+    .container { width: min(1100px, 92%); margin: auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(9,9,9,.96);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .logo { font-size: 1.45rem; font-weight: 900; letter-spacing: 1px; }
+    .logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 16px; align-items: center; }
+    .nav-links a { font-size: .9rem; }
+    .menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: white;
+      border-radius: 8px;
+      padding: 7px 11px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 17px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #111;
+      font-weight: 800;
+      text-align: center;
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid var(--gold);
+    }
+    .btn-green { background: var(--green); color: white; }
+
+    .hero {
+      padding: 76px 0 65px;
+      background:
+        radial-gradient(ellipse at 80% 15%, rgba(212,175,55,.15), transparent 40%),
+        linear-gradient(135deg, #090909, #17140b);
+    }
+    .eyebrow {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: .76rem;
+      font-weight: 800;
+    }
+    h1 { font-size: clamp(2.5rem, 8vw, 4.7rem); line-height: 1.05; margin: 12px 0 20px; }
+    h1 span { color: var(--gold); }
+    .hero p { max-width: 590px; color: var(--muted); font-size: 1.05rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 25px; }
+    .trust { margin-top: 27px; font-size: .85rem; color: var(--muted); }
+
+    section { padding: 58px 0; }
+    .section-head { margin-bottom: 25px; }
+    .section-head h2 { margin: 0 0 7px; font-size: clamp(1.7rem, 5vw, 2.5rem); }
+    .section-head p { color: var(--muted); margin: 0; }
+    .gold { color: var(--gold); }
+    .search-tools { display: grid; grid-template-columns: 1fr 190px; gap: 12px; margin: 22px 0; }
+    input, select, textarea {
+      width: 100%;
+      min-width: 0;
+      padding: 13px;
+      color: white;
+      background: #101010;
+      border: 1px solid #444;
+      border-radius: 8px;
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); }
+    .filters { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 22px; }
+    .filter {
+      border: 1px solid #444;
+      background: #151515;
+      color: white;
+      padding: 9px 15px;
+      border-radius: 30px;
+    }
+    .filter.active { background: var(--gold); color: #111; border-color: var(--gold); }
+    .artist-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 17px; }
+    .artist-card {
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+    .artist-art {
+      height: 135px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #29220c, #173525);
+      font-size: 3rem;
+    }
+    .artist-content { padding: 17px; }
+    .artist-content h3 { margin: 0; font-size: 1.15rem; }
+    .artist-content p { color: var(--muted); font-size: .9rem; margin: 5px 0 12px; }
+    .tag {
+      display: inline-block;
+      padding: 4px 9px;
+      border: 1px solid #665522;
+      color: var(--gold);
+      border-radius: 30px;
+      font-size: .75rem;
+      margin-bottom: 10px;
+    }
+    .artist-content .btn { width: 100%; padding: 10px; }
+    .demo-note { color: var(--muted); font-size: .82rem; margin-top: 18px; }
+
+    .membership { background: #12120e; border-top: 1px solid #332b14; border-bottom: 1px solid #332b14; }
+    .price-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; margin: 25px 0; }
+    .price-card { background: var(--panel); padding: 23px; border: 1px solid var(--border); border-radius: 12px; }
+    .price-card.featured { border-color: var(--gold); }
+    .price { font-size: 2rem; font-weight: 900; color: var(--gold); margin: 5px 0; }
+    .price-card p { color: var(--muted); font-size: .9rem; }
+    .signup-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: 28px; align-items: start; }
+    .benefits { padding: 22px; border-radius: 12px; background: #141414; border: 1px solid var(--border); }
+    .benefits li { margin: 12px 0; }
+    form { background: var(--panel); border: 1px solid var(--border); padding: 22px; border-radius: 12px; }
+    .field { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; font-weight: 700; font-size: .9rem; }
+    .hint { color: var(--muted); font-size: .8rem; }
+    .check-row { display: flex; gap: 10px; align-items: start; margin: 16px 0; font-size: .85rem; }
+    .check-row input { width: auto; margin-top: 5px; }
+    form .btn { width: 100%; }
+    .notice { display: none; margin-top: 15px; padding: 13px; background: #102b1b; border: 1px solid var(--green); border-radius: 8px; overflow-wrap: anywhere; }
+    .notice.show { display: block; }
+    .steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 15px; }
+    .step { padding: 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
+    .step-num { color: var(--gold); font-size: 1.5rem; font-weight: 900; }
+    footer { border-top: 1px solid var(--border); padding: 28px 0; color: var(--muted); font-size: .85rem; }
+    .footer-inner { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+
+    @media (max-width: 650px) {
+      .menu-btn { display: block; }
+      .nav { flex-wrap: wrap; padding: 12px 0; }
+      .nav-links { display: none; flex-basis: 100%; flex-direction: column; align-items: stretch; padding: 8px 0 12px; }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 8px 0; }
+      .hero { padding: 55px 0 45px; }
+      .search-tools { grid-template-columns: 1fr; }
+      .artist-grid, .price-grid, .signup-layout, .steps { grid-template-columns: 1fr; }
+      .artist-art { height: 115px; }
+      section { padding: 44px 0; }
+      form { padding: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="logo" href="#home">STAGE<span>LINK</span></a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navLinks">Menu ☰</button>
+      <nav class="nav-links" id="navLinks">
+        <a href="#artists">Discover artists</a>
+        <a href="#how">How it works</a>
+        <a href="#membership">Membership</a>
+        <a class="btn" href="#signup">Join StageLink</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container">
+        <div class="eyebrow">South African talent, connected</div>
+        <h1>Your next event.<br>Your next <span>sound.</span></h1>
+        <p>Discover musicians and DJs for your next event. StageLink is a growing concept designed to connect event organisers with talent across South Africa.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#artists">Discover artists ↓</a>
+          <a class="btn btn-outline" href="#signup">Join as an artist</a>
+        </div>
+        <div class="trust">Music • DJs • Events • South Africa</div>
+      </div>
+    </section>
+
+    <section id="artists">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Find your sound</div>
+          <h2>Discover <span class="gold">artists</span></h2>
+          <p>Explore these example profiles and try the search and filters.</p>
+        </div>
+        <div class="search-tools">
+          <input id="searchInput" type="search" placeholder="Search name, city or style..." aria-label="Search artists">
+          <select id="cityFilter" aria-label="Filter by city">
+            <option value="">All locations</option>
+            <option>Johannesburg</option>
+            <option>Ekurhuleni</option>
+            <option>Pretoria</option>
+            <option>Cape Town</option>
+          </select>
+        </div>
+        <div class="filters" aria-label="Artist category filters">
+          <button class="filter active" data-category="All">All artists</button>
+          <button class="filter" data-category="Musician">Musicians</button>
+          <button class="filter" data-category="DJ">DJs</button>
+        </div>
+        <div class="artist-grid" id="artistGrid">
+          <article class="artist-card" data-name="Thando M." data-category="Musician" data-city="Johannesburg" data-style="Afro soul live vocals">
+            <div class="artist-art" aria-hidden="true">🎤</div>
+            <div class="artist-content">
+              <span class="tag">Musician · Example</span>
+              <h3>Thando M.</h3>
+              <p>📍 Johannesburg<br>Afro-soul · Live vocals</p>
+              <button class="btn btn-outline enquire" data-artist="Thando M.">Enquire about artist</button>
+            </div>
+          </article>
+          <article class="artist-card" data-name="DJ Kinetic" data-category="DJ" data-city="Ekurhuleni" data-style="Amapiano house party">
+            <div class="artist-art" aria-hidden="true">🎧</div>
+            <div class="artist-content">
+              <span class="tag">DJ · Example</span>
+              <h3>DJ Kinetic</h3>
+              <p>📍 Ekurhuleni<br>Amapiano · House · Parties</p>
+              <button class="btn btn-outline enquire" data-artist="DJ Kinetic">Enquire about artist</button>
+            </div>
+          </article>
+          <article class="artist-card" data-name="The Sunday Set" data-category="Musician" data-city="Pretoria" data-style="Acoustic pop events">
+            <div class="artist-art" aria-hidden="true">🎸</div>
+            <div class="artist-content">
+              <span class="tag">Musician · Example</span>
+              <h3>The Sunday Set</h3>
+              <p>📍 Pretoria<br>Acoustic · Pop · Events</p>
+              <button class="btn btn-outline enquire" data-artist="The Sunday Set">Enquire about artist</button>
+            </div>
+          </article>
+          <article class="artist-card" data-name="Rea Beats" data-category="DJ" data-city="Cape Town" data-style="Afro house dance music">
+            <div class="artist-art" aria-hidden="true">💿</div>
+            <div class="artist-content">
+              <span class="tag">DJ · Example</span>
+              <h3>Rea Beats</h3>
+              <p>📍 Cape Town<br>Afro-house · Dance music</p>
+              <button class="btn btn-outline enquire" data-artist="Rea Beats">Enquire about artist</button>
+            </div>
+          </article>
+        </div>
+        <p id="noResults" class="demo-note" hidden>No example artists match your search. Try another search or filter.</p>
+        <p class="demo-note">Demo only: these are fictional example profiles, not verified or bookable artists. Enquiry buttons do not send a booking request yet.</p>
+      </div>
+    </section>
+
+    <section class="membership" id="membership">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Artist membership</div>
+          <h2>Put your talent <span class="gold">on the map.</span></h2>
+          <p>Join the StageLink artist directory concept and prepare your profile for discovery.</p>
+        </div>
+        <div class="price-grid">
+          <div class="price-card featured">
+            <span class="tag">First-time signup</span>
+            <div class="price">R69.99</div>
+            <p>Once-off introductory signup fee.</p>
+          </div>
+          <div class="price-card">
+            <span class="tag">Monthly membership</span>
+            <div class="price">R99 <small>/ month</small></div>
+            <p>Recurring monthly membership after signup, subject to the final membership terms.</p>
+          </div>
+        </div>
+        <div class="signup-layout" id="signup">
+          <div class="benefits">
+            <h3>Artist membership includes</h3>
+            <ul>
+              <li>Artist profile submission</li>
+              <li>Musician or DJ category</li>
+              <li>City and style details</li>
+              <li>Preparation for discovery by event organisers</li>
+            </ul>
+            <p class="hint">These are planned features. Profiles are not published automatically by this demo.</p>
+          </div>
+          <form id="signupForm">
+            <h3>Artist signup</h3>
+            <p class="hint">Complete the form to preview your submission. It will not be sent or saved to a server.</p>
+            <div class="field">
+              <label for="stageName">Stage or artist name *</label>
+              <input id="stageName" name="stageName" required maxlength="70" placeholder="Your artist name">
+            </div>
+            <div class="field">
+              <label for="email">Email address *</label>
+              <input id="email" name="email" type="email" required maxlength="120" placeholder="you@example.com">
+            </div>
+            <div class="field">
+              <label for="category">Artist category *</label>
+              <select id="category" name="category" required>
+                <option value="">Choose category</option>
+                <option>Musician</option>
+                <option>DJ</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="city">City or area *</label>
+              <input id="city" name="city" required maxlength="80" placeholder="e.g. Boksburg">
+            </div>
+            <div class="field">
+              <label for="province">Province *</label>
+              <select id="province" name="province" required>
+                <option value="">Choose province</option>
+                <option>Eastern Cape</option>
+                <option>Free State</option>
+                <option>Gauteng</option>
+                <option>KwaZulu-Natal</option>
+                <option>Limpopo</option>
+                <option>Mpumalanga</option>
+                <option>North West</option>
+                <option>Northern Cape</option>
+                <option>Western Cape</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="style">Music style or short bio</label>
+              <textarea id="style" name="style" rows="3" maxlength="350" placeholder="Tell organisers what you do..."></textarea>
+            </div>
+            <label class="check-row">
+              <input type="checkbox" id="terms" required>
+              <span>I understand this is a demo form and no payment or membership is processed here. *</span>
+            </label>
+            <button class="btn" type="submit">Preview signup</button>
+            <div class="notice" id="signupNotice" role="status" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="container">
+        <div class="section-head">
+          <div class="eyebrow">Simple by design</div>
+          <h2>How StageLink <span class="gold">works</span></h2>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="step-num">01</div><h3>Discover</h3><p>Browse musician and DJ profiles by category and location.</p></div>
+          <div class="step"><div class="step-num">02</div><h3>Connect</h3><p>Event organisers will be able to contact artists once real booking features are connected.</p></div>
+          <div class="step"><div class="step-num">03</div><h3>Join</h3><p>Artists can preview a membership submission using the demo form on this page.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div><strong class="logo">STAGE<span>LINK</span></strong><br>Connecting talent with opportunity.</div>
+      <div>South Africa · ZAR pricing</div>
+      <div>© <span id="year"></span> StageLink</div>
+    </div>
+    <div class="container demo-note">Demo website. No live accounts, payments, subscriptions or booking requests are processed. Membership prices are proposed prices, not an active payment offer.</div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const navLinks = document.getElementById("navLinks");
+
+    menuBtn.addEventListener("click", () => {
+      const isOpen = navLinks.classList.toggle("open");
+      menuBtn.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    navLinks.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        menuBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    const searchInput = document.getElementById("searchInput");
+    const cityFilter = document.getElementById("cityFilter");
+    const artistCards = [...document.querySelectorAll(".artist-card")];
+    const filterButtons = [...document.querySelectorAll(".filter")];
+    const noResults = document.getElementById("noResults");
+    let activeCategory = "All";
+
+    function filterArtists() {
+      const search = searchInput.value.trim().toLowerCase();
+      const city = cityFilter.value;
+      let visibleCount = 0;
+
+      artistCards.forEach(card => {
+        const searchable = [
+          card.dataset.name, card.dataset.category,
+          card.dataset.city, card.dataset.style
+        ].join(" ").toLowerCase();
+
+        const matches = searchable.includes(search) &&
+          (!city || card.dataset.city === city) &&
+          (activeCategory === "All" || card.dataset.category === activeCategory);
+
+        card.hidden = !matches;
+        if (matches) visibleCount++;
+      });
+
+      noResults.hidden = visibleCount !== 0;
+    }
+
+    searchInput.addEventListener("input", filterArtists);
+    cityFilter.addEventListener("change", filterArtists);
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        activeCategory = button.dataset.category;
+        filterButtons.forEach(item => item.classList.toggle("active", item === button));
+        filterArtists();
+      });
+    });
+
+    document.querySelectorAll(".enquire").forEach(button => {
+      button.addEventListener("click", () => {
+        const artist = button.dataset.artist;
+        alert("Demo enquiry for " + artist + ". Live booking requests will be added in a future stage.");
+      });
+    });
+
+    document.getElementById("signupForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!form.reportValidity()) return;
+
+      const name = document.getElementById("stageName").value.trim();
+      const category = document.getElementById("category").value;
+      const city = document.getElementById("city").value.trim();
+      const province = document.getElementById("province").value;
+      const email = document.getElementById("email").value.trim();
+      const style = document.getElementById("style").value.trim();
+
+      const notice = document.getElementById("signupNotice");
+      notice.textContent =
+        "Preview only — not submitted or saved. Artist: " + name +
+        " | Category: " + category + " | Location: " + city + ", " + province +
+        " | Email: " + email + (style ? " | Bio: " + style : "") +
+        ". No payment has been taken.";
+      notice.classList.add("show");
+      notice.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+    </html>
