@@ -519,21 +519,15 @@ async function loadPublishedArtists() {
     button.className = "btn btn-outline enquire";
     button.textContent = "Enquire about artist";
 
-    button.addEventListener("click", () => {
-      if (typeof window.openStageLinkBooking === "function") {
-        let selectedArtistProfileId = null;
+    
+button.addEventListener("click", () => {
+  if (typeof window.openStageLinkBooking === "function") {
+    window.openStageLinkBooking(artist.stage_name, artist.id);
+  } else {
+    alert("The booking enquiry form is not ready yet.");
+  }
+});
 
-window.openStageLinkBooking = function (artistName, profileId) {
-  selectedArtistProfileId = profileId || null;
-
-  artistInput.value = String(artistName || "").trim().slice(0, 70);
-  document.getElementById("booking-artist-label").textContent =
-    "Enquiry for " + artistInput.value;
-
-  notice.textContent = "";
-  panel.style.display = "block";
-  panel.scrollIntoView({ behavior: "smooth", block: "start" });
-};
 
 
     content.append(tag, heading, details, button);
@@ -678,14 +672,22 @@ signupForm.addEventListener("submit", async function(event) {
     panel.style.display = "none";
   });
 
-  window.openStageLinkBooking = function (artistName) {
-    artistInput.value = String(artistName || "").trim().slice(0, 70);
-    document.getElementById("booking-artist-label").textContent =
-      "Enquiry for " + artistInput.value;
-    notice.textContent = "";
-    panel.style.display = "block";
-    panel.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
+  
+let selectedArtistProfileId = null;
+
+window.openStageLinkBooking = function (artistName, profileId) {
+  selectedArtistProfileId = profileId || null;
+
+  artistInput.value = String(artistName || "").trim().slice(0, 70);
+
+  document.getElementById("booking-artist-label").textContent =
+    "Enquiry for " + artistInput.value;
+
+  notice.textContent = "";
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
 
   
 form.addEventListener("submit", async function (event) {
