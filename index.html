@@ -535,5 +535,112 @@ signupForm.addEventListener("submit", async function(event) {
   
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+  <!-- STAGELINK BOOKING ENQUIRY -->
+<section id="booking-enquiry" style="display:none;max-width:600px;margin:30px auto;padding:22px;background:#101010;border:1px solid #c9a45c;border-radius:16px;color:#fff;font-family:Arial,sans-serif;">
+  <h2 style="color:#d6b66f;">Book an Artist</h2>
+  <p id="booking-artist-label">Send an enquiry to your chosen artist.</p>
+
+  <form id="stageLinkBookingForm">
+    <label for="booking-artist">Artist</label>
+    <input id="booking-artist" name="artist" readonly required
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="booking-name">Your name</label>
+    <input id="booking-name" name="organiser_name" required maxlength="100"
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="booking-email">Your email</label>
+    <input id="booking-email" name="contact_email" type="email" required maxlength="254"
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="booking-date">Event date</label>
+    <input id="booking-date" name="event_date" type="date"
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="booking-city">Event city</label>
+    <input id="booking-city" name="event_city" required maxlength="100"
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+
+    <label for="booking-type">Event type</label>
+    <select id="booking-type" name="event_type" required
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;">
+      <option value="">Choose event type</option>
+      <option>Birthday</option>
+      <option>Wedding</option>
+      <option>Corporate event</option>
+      <option>Club or nightlife</option>
+      <option>Festival</option>
+      <option>Private party</option>
+      <option>Other</option>
+    </select>
+
+    <label for="booking-message">Tell the artist about your event</label>
+    <textarea id="booking-message" name="message" required minlength="10" maxlength="1500" rows="4"
+      style="display:block;width:100%;box-sizing:border-box;padding:12px;margin:8px 0 16px;"></textarea>
+
+    <button type="submit"
+      style="width:100%;padding:14px;background:#d6b66f;color:#101010;border:0;border-radius:9px;font-weight:bold;">
+      Send booking enquiry
+    </button>
+
+    <button type="button" id="booking-close"
+      style="width:100%;padding:12px;margin-top:8px;background:transparent;color:#fff;border:1px solid #777;border-radius:9px;">
+      Close
+    </button>
+
+    <p id="booking-notice" role="status" aria-live="polite"></p>
+  </form>
+</section>
+
+<script>
+(function () {
+  const panel = document.getElementById("booking-enquiry");
+  const form = document.getElementById("stageLinkBookingForm");
+  const artistInput = document.getElementById("booking-artist");
+  const notice = document.getElementById("booking-notice");
+
+  if (!panel || !form || !artistInput || !notice) return;
+
+  document.getElementById("booking-close").addEventListener("click", function () {
+    panel.style.display = "none";
+  });
+
+  window.openStageLinkBooking = function (artistName) {
+    artistInput.value = String(artistName || "").trim().slice(0, 70);
+    document.getElementById("booking-artist-label").textContent =
+      "Enquiry for " + artistInput.value;
+    notice.textContent = "";
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    if (!window.supabase || typeof supabaseClient === "undefined") {
+      notice.textContent = "Booking service is not connected yet. Please try again later.";
+      return;
+    }
+
+    const values = new FormData(form);
+    const artistName = String(values.get("artist") || "").trim();
+    const organiserName = String(values.get("organiser_name") || "").trim();
+    const email = String(values.get("contact_email") || "").trim();
+    const eventCity = String(values.get("event_city") || "").trim();
+    const eventType = String(values.get("event_type") || "").trim();
+    const message = String(values.get("message") || "").trim();
+
+    if (!artistName || !organiserName || !email || !eventCity ||
+        !eventType || message.length < 10) {
+      notice.textContent = "Please complete all required fields. Your message must be at least 10 characters.";
+      return;
+    }
+
+    notice.textContent =
+      "The enquiry form is ready, but live artist matching still needs to be connected. No enquiry has been sent.";
+  });
+})();
+</script>
+<!-- END STAGELINK BOOKING ENQUIRY -->
 </body>
     </html>
