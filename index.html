@@ -429,7 +429,6 @@ const supabaseClient = window.supabase.createClient(
 
     const searchInput = document.getElementById("searchInput");
     const cityFilter = document.getElementById("cityFilter");
-    const artistCards = [...document.querySelectorAll(".artist-card")];
     const filterButtons = [...document.querySelectorAll(".filter")];
     const noResults = document.getElementById("noResults");
     let activeCategory = "All";
@@ -439,7 +438,7 @@ const supabaseClient = window.supabase.createClient(
       const city = cityFilter.value;
       let visibleCount = 0;
 
-      artistCards.forEach(card => {
+      document.querySelectorAll(".artist-card").forEach(card => {
         const searchable = [
           card.dataset.name, card.dataset.category,
           card.dataset.city, card.dataset.style
@@ -468,12 +467,86 @@ const supabaseClient = window.supabase.createClient(
     });
 
     document.querySelectorAll(".enquire").forEach(button => {
-      button.addEventListener("click", () => {
-        const artist = button.dataset.artist;
-        alert("Demo enquiry for " + artist + ". Live booking requests will be added in a future stage.");
-      });
-    });
+  button.addEventListener("click", () => {
+    alert("This is a demo artist. Please choose a published artist to send a booking enquiry.");
+  });
+});
 
+
+async function loadPublishedArtists() {
+  if (typeof supabaseClient === "undefined") return;
+
+  const { data, error } = await supabaseClient
+    .from("artist_profiles")
+    .select("id,stage_name,category,city,province,music_style,bio,created_at")
+    .eq("is_published", true)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) {
+    console.error("Could not load StageLink artists:", error.message);
+    return;
+  }
+
+  const artistGrid = document.getElementById("artistGrid");
+  if (!artistGrid || !data) return;
+
+  data.forEach(artist => {
+    const card = document.createElement("article");
+    card.className = "artist-card";
+    card.dataset.name = artist.stage_name || "";
+    card.dataset.category = artist.category || "";
+    card.dataset.city = artist.city || "";
+    card.dataset.style = artist.music_style || "";
+
+    const content = document.createElement("div");
+    content.className = "artist-content";
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = (artist.category || "Artist") + " · StageLink";
+
+    const heading = document.createElement("h3");
+    heading.textContent = artist.stage_name || "Artist";
+
+    const details = document.createElement("p");
+    details.textContent = "📍 " +
+      [artist.city, artist.province].filter(Boolean).join(", ") +
+      (artist.music_style ? " · " + artist.music_style : "");
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn btn-outline enquire";
+    button.textContent = "Enquire about artist";
+
+    button.addEventListener("click", () => {
+      if (typeof window.openStageLinkBooking === "function") {
+        let selectedArtistProfileId = null;
+
+window.openStageLinkBooking = function (artistName, profileId) {
+  selectedArtistProfileId = profileId || null;
+
+  artistInput.value = String(artistName || "").trim().slice(0, 70);
+  document.getElementById("booking-artist-label").textContent =
+    "Enquiry for " + artistInput.value;
+
+  notice.textContent = "";
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+
+    content.append(tag, heading, details, button);
+    card.appendChild(content);
+    artistGrid.appendChild(card);
+  });
+
+  if (typeof filterArtists === "function") {
+    filterArtists();
+  }
+}
+
+loadPublishedArtists();
     
 const signupForm = document.getElementById("signupForm");
 
@@ -614,31 +687,81 @@ signupForm.addEventListener("submit", async function(event) {
     panel.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  form.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
-    if (!window.supabase || typeof supabaseClient === "undefined") {
-      notice.textContent = "Booking service is not connected yet. Please try again later.";
-      return;
-    }
+  if (!window.supabase || typeof supabaseClient === "undefined") {
+    notice.textContent = "Booking service is unavailable. Please try again later.";
+    return;
+  }
 
-    const values = new FormData(form);
-    const artistName = String(values.get("artist") || "").trim();
-    const organiserName = String(values.get("organiser_name") || "").trim();
-    const email = String(values.get("contact_email") || "").trim();
-    const eventCity = String(values.get("event_city") || "").trim();
-    const eventType = String(values.get("event_type") || "").trim();
-    const message = String(values.get("message") || "").trim();
+  if (!selectedArtistProfileId) {
+    notice.textContent =
+      "This is an example profile. Please choose a published StageLink artist.";
+    return;
+  }
 
-    if (!artistName || !organiserName || !email || !eventCity ||
-        !eventType || message.length < 10) {
-      notice.textContent = "Please complete all required fields. Your message must be at least 10 characters.";
+  const values = new FormData(form);
+  const artistName = String(values.get("artist") || "").trim();
+  const organiserName = String(values.get("organiser_name") || "").trim();
+  const email = String(values.get("contact_email") || "").trim();
+  const eventDate = String(values.get("event_date") || "").trim();
+  const eventCity = String(values.get("event_city") || "").trim();
+  const eventType = String(values.get("event_type") || "").trim();
+  const message = String(values.get("message") || "").trim();
+
+  if (
+    !artistName ||
+    !organiserName ||
+    !email ||
+    !eventCity ||
+    !eventType ||
+    message.length < 10
+  ) {
+    notice.textContent =
+      "Complete all required fields. Your message must be at least 10 characters.";
+    return;
+  }
+
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (submitButton) submitButton.disabled = true;
+  notice.textContent = "Sending your enquiry…";
+
+  try {
+    const { error } = await supabaseClient
+      .from("booking_enquiries")
+      .insert({
+        artist_profile_id: selectedArtistProfileId,
+        artist_name_snapshot: artistName,
+        organiser_name: organiserName,
+        contact_email: email,
+        event_date: eventDate || null,
+        event_city: eventCity,
+        event_type: eventType,
+        message: message
+      });
+
+    if (error) {
+      console.error("StageLink enquiry submission failed:", error.message);
+      notice.textContent =
+        "We couldn't send your enquiry. Please check your details and try again.";
       return;
     }
 
     notice.textContent =
-      "The enquiry form is ready, but live artist matching still needs to be connected. No enquiry has been sent.";
-  });
+      "Enquiry submitted successfully. This is a request, not a confirmed booking.";
+    form.reset();
+    selectedArtistProfileId = null;
+  } catch (error) {
+    console.error("StageLink enquiry submission failed.");
+    notice.textContent =
+      "A connection error occurred. Please try again later.";
+  } finally {
+    if (submitButton) submitButton.disabled = false;
+  }
+});
+
 })();
 </script>
 <!-- END STAGELINK BOOKING ENQUIRY -->
